@@ -9,20 +9,25 @@ namespace Bicep.Core.TypeSystem
 {
     public class DiscriminatedObjectType : TypeSymbol
     {
-        public DiscriminatedObjectType(string name, string discriminatorKey, IEnumerable<NamedObjectType> unionMembers)
+        public DiscriminatedObjectType(string name, string discriminatorKey, IEnumerable<TypeReference> unionMembers)
             : base(name)
         {
-            var unionMembersByKey = new Dictionary<string, NamedObjectType>();
+            var unionMembersByKey = new Dictionary<string, TypeReference>();
             foreach (var member in unionMembers)
             {
-                if (!member.Properties.TryGetValue(discriminatorKey, out var discriminatorProp))
+                if (!(member.Type is NamedObjectType namedObject))
+                {
+                    throw new ArgumentException($"Invalid member of type {member.Type.GetType()}");
+                }
+
+                if (!namedObject.Properties.TryGetValue(discriminatorKey, out var discriminatorProp))
                 {
                     throw new ArgumentException("Missing discriminator field on member");
                 }
 
-                if (!(discriminatorProp.Type is StringLiteralType stringLiteral))
+                if (!(discriminatorProp.TypeReference.Type is StringLiteralType stringLiteral))
                 {
-                    throw new ArgumentException($"Invalid discriminator field type {discriminatorProp.Type.Name} on member");
+                    throw new ArgumentException($"Invalid discriminator field type {discriminatorProp.TypeReference.Type.Name} on member");
                 }
 
                 if (unionMembersByKey.ContainsKey(stringLiteral.Name))
@@ -41,6 +46,6 @@ namespace Bicep.Core.TypeSystem
 
         public string DiscriminatorKey { get; }
 
-        public ImmutableDictionary<string, NamedObjectType> UnionMembersByKey { get; }
+        public ImmutableDictionary<string, TypeReference> UnionMembersByKey { get; }
     }
 }

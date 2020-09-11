@@ -58,7 +58,7 @@ namespace Bicep.Core.TypeSystem
 
             // TODO: Construct/lookup type information based on JSON schema or swagger
             // for now assuming very basic resource schema
-            return new ResourceType(typeName, LanguageConstants.CreateResourceProperties(typeReference), additionalPropertiesType: null, typeReference);
+            return new ResourceType(typeName, LanguageConstants.CreateResourceProperties(typeReference), additionalProperties: null, typeReference);
         }
 
         private TypeSymbol GetTypeInfoInternal(TypeManagerContext context, SyntaxBase syntax)
@@ -193,21 +193,21 @@ namespace Bicep.Core.TypeSystem
             // type results are cached
             var properties = @object.Properties
                 .GroupBy(p => p.GetKeyText(), LanguageConstants.IdentifierComparer)
-                .Select(group => new TypeProperty(group.Key, UnionType.Create(group.Select(p => this.GetTypeInfoInternal(context, p.Value)))));
+                .Select(group => new TypeProperty(group.Key, UnionType.Create(group.Select(p => this.GetTypeInfoInternal(context, p.Value).AsReference())).AsReference()));
 
             // TODO: Add structural naming?
-            return new NamedObjectType(LanguageConstants.Object.Name, properties, additionalPropertiesType: null);
+            return new NamedObjectType(LanguageConstants.Object.Name, properties, additionalProperties: null);
         }
 
         private TypeSymbol GetArrayType(TypeManagerContext context, ArraySyntax array)
         {
             var errors = new List<ErrorDiagnostic>();
 
-            var itemTypes = new List<TypeSymbol>(array.Children.Length);
+            var itemTypes = new List<TypeReference>(array.Children.Length);
             foreach (SyntaxBase arrayItem in array.Children)
             {
                 var itemType = this.GetTypeInfoInternal(context, arrayItem);
-                itemTypes.Add(itemType);
+                itemTypes.Add(itemType.AsReference());
                 CollectErrors(errors, itemType);
             }
 
@@ -224,7 +224,7 @@ namespace Bicep.Core.TypeSystem
                 return LanguageConstants.Array;
             }
 
-            return new TypedArrayType(aggregatedItemType);
+            return new TypedArrayType(aggregatedItemType.AsReference());
         }
 
         private TypeSymbol GetPropertyAccessType(TypeManagerContext context, PropertyAccessSyntax syntax)
@@ -266,7 +266,7 @@ namespace Bicep.Core.TypeSystem
                 return LanguageConstants.Any;
             }
 
-            if (baseType.Properties.Any() || baseType.AdditionalPropertiesType != null)
+            if (baseType.Properties.Any() || baseType.AdditionalProperties != null)
             {
                 // the object type allows properties
                 return LanguageConstants.Any;
@@ -299,15 +299,15 @@ namespace Bicep.Core.TypeSystem
                 }
 
                 // there is - return its type
-                return declaredProperty.Type;
+                return declaredProperty.TypeReference.Type;
             }
 
             // the property is not declared
             // check additional properties
-            if (baseType.AdditionalPropertiesType != null)
+            if (baseType.AdditionalProperties != null)
             {
                 // yes - return the additional property type
-                return baseType.AdditionalPropertiesType;
+                return baseType.AdditionalProperties.Type;
             }
 
             return new ErrorTypeSymbol(DiagnosticBuilder.ForPosition(propertyExpressionPositionable).UnknownProperty(baseType, propertyName));
@@ -355,7 +355,7 @@ namespace Bicep.Core.TypeSystem
                 {
                     // the index is of "any" type or integer type
                     // return the item type
-                    return baseArray.ItemType;
+                    return baseArray.Item.Type;
                 }
 
                 return new ErrorTypeSymbol(DiagnosticBuilder.ForPosition(syntax.IndexExpression).ArraysRequireIntegerIndex(indexType));
@@ -642,7 +642,7 @@ namespace Bicep.Core.TypeSystem
             }
             
             // the return type is the union of true and false expression types
-            return UnionType.Create(trueType, falseType);
+            return UnionType.Create(trueType.AsReference(), falseType.AsReference());
         }
 
         private static void CollectErrors(List<ErrorDiagnostic> errors, TypeSymbol type)

@@ -39,9 +39,9 @@ namespace Bicep.Core
         public static readonly TypeSymbol Array = new ArrayType("array");
 
         // declares the description property but also allows any other property of any type
-        public static readonly TypeSymbol ParameterModifierMetadata = new NamedObjectType(nameof(ParameterModifierMetadata), CreateParameterModifierMetadataProperties(), Any, TypePropertyFlags.Constant);
+        public static readonly TypeSymbol ParameterModifierMetadata = new NamedObjectType(nameof(ParameterModifierMetadata), CreateParameterModifierMetadataProperties(), Any.AsReference(), TypePropertyFlags.Constant);
 
-        public static readonly TypeSymbol Tags = new NamedObjectType(nameof(Tags), Enumerable.Empty<TypeProperty>(), String, TypePropertyFlags.None);
+        public static readonly TypeSymbol Tags = new NamedObjectType(nameof(Tags), Enumerable.Empty<TypeProperty>(), String.AsReference(), TypePropertyFlags.None);
 
         // types allowed to use in output and parameter declarations
         public static readonly ImmutableSortedDictionary<string, TypeSymbol> DeclarationTypes = new[] {String, Object, Int, Bool, Array}.ToImmutableSortedDictionary(type => type.Name, type => type, StringComparer.Ordinal);
@@ -55,7 +55,7 @@ namespace Bicep.Core
                 throw new ArgumentException($"Modifiers are not supported for type '{parameterType.Name}'.");
             }
 
-            return new NamedObjectType($"ParameterModifier_{parameterType.Name}", CreateParameterModifierProperties(parameterType), additionalPropertiesType: null);
+            return new NamedObjectType($"ParameterModifier_{parameterType.Name}", CreateParameterModifierProperties(parameterType), additionalProperties: null);
         }
 
         private static IEnumerable<TypeProperty> CreateParameterModifierProperties(TypeSymbol parameterType)
@@ -63,34 +63,34 @@ namespace Bicep.Core
             if (ReferenceEquals(parameterType, String) || ReferenceEquals(parameterType, Object))
             {
                 // only string and object types have secure equivalents
-                yield return new TypeProperty("secure", Bool, TypePropertyFlags.Constant);
+                yield return new TypeProperty("secure", Bool.AsReference(), TypePropertyFlags.Constant);
             }
 
             // default value is allowed to have expressions
-            yield return new TypeProperty("default", parameterType);
+            yield return new TypeProperty("default", parameterType.AsReference());
 
-            yield return new TypeProperty("allowed", new TypedArrayType(parameterType), TypePropertyFlags.Constant);
+            yield return new TypeProperty("allowed", new TypedArrayType(parameterType.AsReference()).AsReference(), TypePropertyFlags.Constant);
 
             if (ReferenceEquals(parameterType, Int))
             {
                 // value constraints are valid on integer parameters only
-                yield return new TypeProperty("minValue", Int, TypePropertyFlags.Constant);
-                yield return new TypeProperty("maxValue", Int, TypePropertyFlags.Constant);
+                yield return new TypeProperty("minValue", Int.AsReference(), TypePropertyFlags.Constant);
+                yield return new TypeProperty("maxValue", Int.AsReference(), TypePropertyFlags.Constant);
             }
 
             if (ReferenceEquals(parameterType, String) || ReferenceEquals(parameterType, Array))
             {
                 // strings and arrays can have length constraints
-                yield return new TypeProperty("minLength", Int, TypePropertyFlags.Constant);
-                yield return new TypeProperty("maxLength", Int, TypePropertyFlags.Constant);
+                yield return new TypeProperty("minLength", Int.AsReference(), TypePropertyFlags.Constant);
+                yield return new TypeProperty("maxLength", Int.AsReference(), TypePropertyFlags.Constant);
             }
 
-            yield return new TypeProperty("metadata", ParameterModifierMetadata, TypePropertyFlags.Constant);
+            yield return new TypeProperty("metadata", ParameterModifierMetadata.AsReference(), TypePropertyFlags.Constant);
         }
 
         private static IEnumerable<TypeProperty> CreateParameterModifierMetadataProperties()
         {
-            yield return new TypeProperty("description", String, TypePropertyFlags.Constant);
+            yield return new TypeProperty("description", String.AsReference(), TypePropertyFlags.Constant);
         }
 
         public static IEnumerable<TypeProperty> CreateResourceProperties(ResourceTypeReference resourceTypeReference)
@@ -103,45 +103,46 @@ namespace Bicep.Core
              * - apiVersion - included in resource type on resource declarations
              */
 
-            yield return new TypeProperty("id", String, TypePropertyFlags.ReadOnly | TypePropertyFlags.SkipInlining);
+            yield return new TypeProperty("id", String.AsReference(), TypePropertyFlags.ReadOnly | TypePropertyFlags.SkipInlining);
 
-            yield return new TypeProperty("name", String, TypePropertyFlags.Required | TypePropertyFlags.SkipInlining);
+            yield return new TypeProperty("name", String.AsReference(), TypePropertyFlags.Required | TypePropertyFlags.SkipInlining);
 
-            yield return new TypeProperty("type", new StringLiteralType(resourceTypeReference.FullyQualifiedType), TypePropertyFlags.ReadOnly | TypePropertyFlags.SkipInlining);
+            yield return new TypeProperty("type", new StringLiteralType(resourceTypeReference.FullyQualifiedType).AsReference(), TypePropertyFlags.ReadOnly | TypePropertyFlags.SkipInlining);
 
-            yield return new TypeProperty("apiVersion", new StringLiteralType(resourceTypeReference.ApiVersion), TypePropertyFlags.ReadOnly | TypePropertyFlags.SkipInlining);
-
-            // TODO: Model type fully
-            yield return new TypeProperty("sku", Object);
-
-            yield return new TypeProperty("kind", String);
-            yield return new TypeProperty("managedBy", String);
-
-            var stringArray = new TypedArrayType(String);
-            yield return new TypeProperty("managedByExtended", stringArray);
-
-            yield return new TypeProperty("location", String);
+            yield return new TypeProperty("apiVersion", new StringLiteralType(resourceTypeReference.ApiVersion).AsReference(), TypePropertyFlags.ReadOnly | TypePropertyFlags.SkipInlining);
 
             // TODO: Model type fully
-            yield return new TypeProperty("extendedLocation", Object);
+            yield return new TypeProperty("sku", Object.AsReference());
 
-            yield return new TypeProperty("zones", stringArray);
+            yield return new TypeProperty("kind", String.AsReference());
+            yield return new TypeProperty("managedBy", String.AsReference());
 
-            yield return new TypeProperty("plan", Object);
+            var stringArray = new TypedArrayType(String.AsReference());
+            yield return new TypeProperty("managedByExtended", stringArray.AsReference());
 
-            yield return new TypeProperty("eTag", String);
-
-            yield return new TypeProperty("tags", Tags);
-
-            // TODO: Model type fully
-            yield return new TypeProperty("scale", Object);
+            yield return new TypeProperty("location", String.AsReference());
 
             // TODO: Model type fully
-            yield return new TypeProperty("identity", Object);
+            yield return new TypeProperty("extendedLocation", Object.AsReference());
 
-            yield return new TypeProperty("properties", Object);
+            yield return new TypeProperty("zones", stringArray.AsReference());
 
-            yield return new TypeProperty("dependsOn", new TypedArrayType(ResourceRef), TypePropertyFlags.WriteOnly);
+            yield return new TypeProperty("plan", Object.AsReference());
+
+            yield return new TypeProperty("eTag", String.AsReference());
+
+            yield return new TypeProperty("tags", Tags.AsReference());
+
+            // TODO: Model type fully
+            yield return new TypeProperty("scale", Object.AsReference());
+
+            // TODO: Model type fully
+            yield return new TypeProperty("identity", Object.AsReference());
+
+            yield return new TypeProperty("properties", Object.AsReference());
+
+            var resourceRefArray = new TypedArrayType(ResourceRef.AsReference());
+            yield return new TypeProperty("dependsOn", resourceRefArray.AsReference(), TypePropertyFlags.WriteOnly);
         }
     }
 }

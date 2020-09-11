@@ -14,7 +14,7 @@ namespace Bicep.Core.SemanticModel.Namespaces
             FunctionOverload.CreateFixed("any", LanguageConstants.Any, LanguageConstants.Any),
 
             FunctionOverload.CreateWithVarArgs("concat", LanguageConstants.Array, 1, LanguageConstants.Array),
-            FunctionOverload.CreateWithVarArgs("concat", LanguageConstants.String, 1, UnionType.Create(LanguageConstants.String, LanguageConstants.Int, LanguageConstants.Bool)),
+            FunctionOverload.CreateWithVarArgs("concat", LanguageConstants.String, 1, UnionType.Create(LanguageConstants.String.AsReference(), LanguageConstants.Int.AsReference(), LanguageConstants.Bool.AsReference())),
             FunctionOverload.CreatePartialFixed("format", LanguageConstants.String, new[]
             {
                 LanguageConstants.String
@@ -22,20 +22,20 @@ namespace Bicep.Core.SemanticModel.Namespaces
             FunctionOverload.CreateFixed("base64", LanguageConstants.String, LanguageConstants.String),
             new FunctionOverload("padLeft", LanguageConstants.String, 2, 3, new[]
             {
-                UnionType.Create(LanguageConstants.String, LanguageConstants.Int), LanguageConstants.Int, LanguageConstants.String
+                UnionType.Create(LanguageConstants.String.AsReference(), LanguageConstants.Int.AsReference()), LanguageConstants.Int, LanguageConstants.String
             }, null),
             FunctionOverload.CreateFixed("replace", LanguageConstants.String, LanguageConstants.String, LanguageConstants.String, LanguageConstants.String),
             FunctionOverload.CreateFixed("toLower", LanguageConstants.String, LanguageConstants.String),
             FunctionOverload.CreateFixed("toUpper", LanguageConstants.String, LanguageConstants.String),
-            FunctionOverload.CreateFixed("length", LanguageConstants.Int, UnionType.Create(LanguageConstants.String, LanguageConstants.Object, LanguageConstants.Array)),
-            FunctionOverload.CreateFixed("split", LanguageConstants.Array, LanguageConstants.String, UnionType.Create(LanguageConstants.String, LanguageConstants.Array)),
+            FunctionOverload.CreateFixed("length", LanguageConstants.Int, UnionType.Create(LanguageConstants.String.AsReference(), LanguageConstants.Object.AsReference(), LanguageConstants.Array.AsReference())),
+            FunctionOverload.CreateFixed("split", LanguageConstants.Array, LanguageConstants.String, UnionType.Create(LanguageConstants.String.AsReference(), LanguageConstants.Array.AsReference())),
             FunctionOverload.CreateFixed("add", LanguageConstants.Int, LanguageConstants.Int, LanguageConstants.Int),
             FunctionOverload.CreateFixed("sub", LanguageConstants.Int, LanguageConstants.Int, LanguageConstants.Int),
             FunctionOverload.CreateFixed("mul", LanguageConstants.Int, LanguageConstants.Int, LanguageConstants.Int),
             FunctionOverload.CreateFixed("div", LanguageConstants.Int, LanguageConstants.Int, LanguageConstants.Int),
             FunctionOverload.CreateFixed("mod", LanguageConstants.Int, LanguageConstants.Int, LanguageConstants.Int),
             FunctionOverload.CreateFixed("string", LanguageConstants.String, LanguageConstants.Any),
-            FunctionOverload.CreateFixed("int", LanguageConstants.Int, UnionType.Create(LanguageConstants.String, LanguageConstants.Int)),
+            FunctionOverload.CreateFixed("int", LanguageConstants.Int, UnionType.Create(LanguageConstants.String.AsReference(), LanguageConstants.Int.AsReference())),
             FunctionOverload.CreateWithVarArgs("uniqueString", LanguageConstants.String, 1, LanguageConstants.String),
             FunctionOverload.CreateWithVarArgs("guid", LanguageConstants.String, 1, LanguageConstants.String),
             FunctionOverload.CreateFixed("trim", LanguageConstants.String, LanguageConstants.String),
@@ -45,7 +45,7 @@ namespace Bicep.Core.SemanticModel.Namespaces
             FunctionOverload.CreateFixed("take", LanguageConstants.String, LanguageConstants.String, LanguageConstants.Int),
             FunctionOverload.CreateFixed("skip", LanguageConstants.Array, LanguageConstants.Array, LanguageConstants.Int),
             FunctionOverload.CreateFixed("skip", LanguageConstants.String, LanguageConstants.String, LanguageConstants.Int),
-            FunctionOverload.CreateFixed("empty", LanguageConstants.Bool, UnionType.Create(LanguageConstants.Null, LanguageConstants.Object, LanguageConstants.Array, LanguageConstants.String)),
+            FunctionOverload.CreateFixed("empty", LanguageConstants.Bool, UnionType.Create(LanguageConstants.Null.AsReference(), LanguageConstants.Object.AsReference(), LanguageConstants.Array.AsReference(), LanguageConstants.String.AsReference())),
             FunctionOverload.CreateFixed("contains", LanguageConstants.Bool, LanguageConstants.Object, LanguageConstants.String),
             FunctionOverload.CreateFixed("contains", LanguageConstants.Bool, LanguageConstants.Array, LanguageConstants.Any),
             FunctionOverload.CreateFixed("contains", LanguageConstants.Bool, LanguageConstants.String, LanguageConstants.String),

@@ -83,7 +83,7 @@ namespace Bicep.Core.UnitTests.TypeSystem
         [TestMethod]
         public void NothingShouldBeAssignableToNeverType()
         {
-            var never = UnionType.Create();
+            var never = UnionType.Create(Enumerable.Empty<TypeReference>());
             TypeValidator.AreTypesAssignable(LanguageConstants.Bool, never).Should().BeFalse();
             TypeValidator.AreTypesAssignable(LanguageConstants.Int, never).Should().BeFalse();
             TypeValidator.AreTypesAssignable(LanguageConstants.String, never).Should().BeFalse();
@@ -694,14 +694,14 @@ namespace Bicep.Core.UnitTests.TypeSystem
                 {
                     new NamedObjectType("typeA", new []
                     { 
-                        new TypeProperty("myDiscriminator", new StringLiteralType("valA")),
-                        new TypeProperty("fieldA", LanguageConstants.Any, TypePropertyFlags.Required),
-                    }, null),
+                        new TypeProperty("myDiscriminator", new StringLiteralType("valA").AsReference()),
+                        new TypeProperty("fieldA", LanguageConstants.Any.AsReference(), TypePropertyFlags.Required),
+                    }, null).AsReference(),
                     new NamedObjectType("typeB", new []
                     { 
-                        new TypeProperty("myDiscriminator", new StringLiteralType("valB")),
-                        new TypeProperty("fieldB", LanguageConstants.Any, TypePropertyFlags.Required),
-                    }, null),
+                        new TypeProperty("myDiscriminator", new StringLiteralType("valB").AsReference()),
+                        new TypeProperty("fieldB", LanguageConstants.Any.AsReference(), TypePropertyFlags.Required),
+                    }, null).AsReference(),
                 });
 
             // no discriminator field supplied
