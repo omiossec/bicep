@@ -56,9 +56,7 @@ namespace Bicep.Core.TypeSystem
                 return null;
             }
 
-            // TODO: Construct/lookup type information based on JSON schema or swagger
-            // for now assuming very basic resource schema
-            return new ResourceType(typeName, LanguageConstants.CreateResourceProperties(typeReference), additionalProperties: null, typeReference);
+            return ResourceTypeRegistrar.Instance.LookupType(typeReference);
         }
 
         private TypeSymbol GetTypeInfoInternal(TypeManagerContext context, SyntaxBase syntax)
@@ -310,7 +308,12 @@ namespace Bicep.Core.TypeSystem
                 return baseType.AdditionalProperties.Type;
             }
 
-            return new ErrorTypeSymbol(DiagnosticBuilder.ForPosition(propertyExpressionPositionable).UnknownProperty(baseType, propertyName));
+            var availableProperties = baseType.Properties.Values
+                .Where(p => !p.Flags.HasFlag(TypePropertyFlags.WriteOnly))
+                .Select(p => p.Name)
+                .OrderBy(x => x);
+
+            return new ErrorTypeSymbol(DiagnosticBuilder.ForPosition(propertyExpressionPositionable).UnknownProperty(baseType, propertyName, availableProperties));
         }
 
         private TypeSymbol GetArrayAccessType(TypeManagerContext context, ArrayAccessSyntax syntax)
