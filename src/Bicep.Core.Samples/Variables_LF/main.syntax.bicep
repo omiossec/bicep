@@ -804,7 +804,7 @@ var unusedIntermediateRef = unusedIntermediate.secondaryKey
 //@[53:54) NoOpDeclarationSyntax
 //@[53:54)  NewLine |\n|
 var previousEmitLimit = [
-//@[0:296) VariableDeclarationSyntax
+//@[0:298) VariableDeclarationSyntax
 //@[0:3)  Identifier |var|
 //@[4:21)  IdentifierSyntax
 //@[4:21)   Identifier |previousEmitLimit|
@@ -974,4 +974,43 @@ var previousEmitLimit = [
 //@[3:4)    NewLine |\n|
 ]
 //@[0:1)   RightSquare |]|
-//@[1:1) EndOfFile ||
+//@[1:3)  NewLine |\n\n|
+
+var myVar = 'hello'
+//@[0:20) VariableDeclarationSyntax
+//@[0:3)  Identifier |var|
+//@[4:9)  IdentifierSyntax
+//@[4:9)   Identifier |myVar|
+//@[10:11)  Assignment |=|
+//@[12:19)  StringSyntax
+//@[12:19)   StringComplete |'hello'|
+//@[19:20)  NewLine |\n|
+var myVar2 = any({
+//@[0:41) VariableDeclarationSyntax
+//@[0:3)  Identifier |var|
+//@[4:10)  IdentifierSyntax
+//@[4:10)   Identifier |myVar2|
+//@[11:12)  Assignment |=|
+//@[13:40)  FunctionCallSyntax
+//@[13:16)   IdentifierSyntax
+//@[13:16)    Identifier |any|
+//@[16:17)   LeftParen |(|
+//@[17:39)   FunctionArgumentSyntax
+//@[17:39)    ObjectSyntax
+//@[17:18)     LeftBrace |{|
+//@[18:19)     NewLine |\n|
+  something: myVar
+//@[2:19)     ObjectPropertySyntax
+//@[2:11)      IdentifierSyntax
+//@[2:11)       Identifier |something|
+//@[11:12)      Colon |:|
+//@[13:18)      VariableAccessSyntax
+//@[13:18)       IdentifierSyntax
+//@[13:18)        Identifier |myVar|
+//@[18:19)      NewLine |\n|
+})
+//@[0:1)     RightBrace |}|
+//@[1:2)   RightParen |)|
+//@[2:3)  NewLine |\n|
+
+//@[0:0) EndOfFile ||
