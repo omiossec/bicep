@@ -49,7 +49,6 @@ namespace Bicep.Core.Syntax
 
         public virtual void VisitSyntaxTrivia(SyntaxTrivia syntaxTrivia)
         {
-
         }
 
         public virtual void VisitParameterDeclarationSyntax(ParameterDeclarationSyntax syntax)
