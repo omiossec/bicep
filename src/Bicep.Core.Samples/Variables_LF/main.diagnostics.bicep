@@ -122,3 +122,9 @@ var previousEmitLimit = [
     }
   }
 ]
+
+var myVar = 'hello'
+var myVar2 = any({
+  something: myVar
+})
+

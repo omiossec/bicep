@@ -627,4 +627,30 @@ var previousEmitLimit = [
 //@[3:4) NewLine |\n|
 ]
 //@[0:1) RightSquare |]|
-//@[1:1) EndOfFile ||
+//@[1:3) NewLine |\n\n|
+
+var myVar = 'hello'
+//@[0:3) Identifier |var|
+//@[4:9) Identifier |myVar|
+//@[10:11) Assignment |=|
+//@[12:19) StringComplete |'hello'|
+//@[19:20) NewLine |\n|
+var myVar2 = any({
+//@[0:3) Identifier |var|
+//@[4:10) Identifier |myVar2|
+//@[11:12) Assignment |=|
+//@[13:16) Identifier |any|
+//@[16:17) LeftParen |(|
+//@[17:18) LeftBrace |{|
+//@[18:19) NewLine |\n|
+  something: myVar
+//@[2:11) Identifier |something|
+//@[11:12) Colon |:|
+//@[13:18) Identifier |myVar|
+//@[18:19) NewLine |\n|
+})
+//@[0:1) RightBrace |}|
+//@[1:2) RightParen |)|
+//@[2:3) NewLine |\n|
+
+//@[0:0) EndOfFile ||

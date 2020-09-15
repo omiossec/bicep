@@ -136,7 +136,7 @@ var unusedIntermediateRef = unusedIntermediate.secondaryKey
 
 // previously this was not possible to emit correctly
 var previousEmitLimit = [
-//@[4:21) Variable previousEmitLimit. Declaration start char: 0, length: 296
+//@[4:21) Variable previousEmitLimit. Declaration start char: 0, length: 298
   concat('s')
   '${4}'
   {
@@ -158,3 +158,11 @@ var previousEmitLimit = [
     }
   }
 ]
+
+var myVar = 'hello'
+//@[4:9) Variable myVar. Declaration start char: 0, length: 20
+var myVar2 = any({
+//@[4:10) Variable myVar2. Declaration start char: 0, length: 41
+  something: myVar
+})
+
