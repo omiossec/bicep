@@ -30,15 +30,27 @@ namespace Bicep.Core.Parser
         public ProgramSyntax Program()
         {
             var statements = new List<SyntaxBase>();
+            var separators = new List<Token>();
+
             while (!this.IsAtEnd())
             {
                 var statement = Declaration();
                 statements.Add(statement);
+
+                var newLine = NewLineOrEof();
+                if (newLine != null)
+                {
+                    separators.Add(newLine);
+                }
             }
 
+            var span = statements.Any()
+                ? TextSpan.Between(statements.First().Span, statements.Last().Span)
+                : new TextSpan(0, 0);
+            var list = new SeparatedSyntaxList(statements, separators, span);
             var endOfFile = reader.Read();
 
-            return new ProgramSyntax(statements, endOfFile, this.lexerDiagnostics);
+            return new ProgramSyntax(list, endOfFile, this.lexerDiagnostics);
         }
 
         private SyntaxBase Declaration()
@@ -59,7 +71,7 @@ namespace Bicep.Core.Parser
                     // TODO: Update when adding other statement types
                     _ => throw new ExpectedTokenException(current, b => b.UnrecognizedDeclaration()),
                 };
-            }, true, TokenType.NewLine);
+            }, consumeTerminator: false, TokenType.NewLine);
         }
 
         private SyntaxBase ParameterDeclaration()
@@ -84,9 +96,7 @@ namespace Bicep.Core.Parser
                 _ => throw new ExpectedTokenException(current, b => b.ExpectedParameterContinuation())
             };
 
-            var newLine = this.NewLineOrEof();
-
-            return new ParameterDeclarationSyntax(keyword, name, type, modifier, newLine);
+            return new ParameterDeclarationSyntax(keyword, name, type, modifier);
         }
 
         private SyntaxBase ParameterDefaultValue()
@@ -104,9 +114,7 @@ namespace Bicep.Core.Parser
             var assignment = this.Assignment();
             var value = this.Expression();
 
-            var newLine = this.NewLineOrEof();
-
-            return new VariableDeclarationSyntax(keyword, name, assignment, value, newLine);
+            return new VariableDeclarationSyntax(keyword, name, assignment, value);
         }
 
         private SyntaxBase OutputDeclaration()
@@ -117,9 +125,7 @@ namespace Bicep.Core.Parser
             var assignment = this.Assignment();
             var value = this.Expression();
 
-            var newLine = this.NewLineOrEof();
-
-            return new OutputDeclarationSyntax(keyword, name, type, assignment, value, newLine);
+            return new OutputDeclarationSyntax(keyword, name, type, assignment, value);
         }
 
         private SyntaxBase ResourceDeclaration()
@@ -133,9 +139,7 @@ namespace Bicep.Core.Parser
             var assignment = this.Assignment();
             var body = this.Object();
 
-            var newLine = this.NewLineOrEof();
-
-            return new ResourceDeclarationSyntax(keyword, name, type, assignment, body, newLine);
+            return new ResourceDeclarationSyntax(keyword, name, type, assignment, body);
         }
 
         private SyntaxBase NoOpStatement()
