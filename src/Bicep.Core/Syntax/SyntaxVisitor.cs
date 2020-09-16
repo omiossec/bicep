@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bicep.Core.Parser;
@@ -49,6 +48,16 @@ namespace Bicep.Core.Syntax
 
         public virtual void VisitSyntaxTrivia(SyntaxTrivia syntaxTrivia)
         {
+        }
+
+        public virtual void VisitSeparatedSyntaxList(SeparatedSyntaxList syntax)
+        {
+            // visit paired elements in order
+            foreach (var (item, token) in syntax.GetPairedElements())
+            {
+                this.Visit(item);
+                this.VisitToken(token);
+            }
         }
 
         public virtual void VisitParameterDeclarationSyntax(ParameterDeclarationSyntax syntax)
