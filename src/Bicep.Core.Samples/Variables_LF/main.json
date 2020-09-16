@@ -83,7 +83,9 @@
       }
     ],
     "myVar": "hello",
-    "myVar2": "[json('{\"something\":\"[variables(''myVar'')]\"}')]"
+    "myVar2": {
+      "something": "[variables('myVar')]"
+    }
   },
   "resources": [],
   "outputs": {}
