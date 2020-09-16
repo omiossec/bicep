@@ -20,7 +20,7 @@ namespace Bicep.LanguageServer.Completions
 
         public static CompletionContext Create(ProgramSyntax syntax, int offset)
         {
-            var node = syntax.TryFindMostSpecificNode(offset, current => true);
+            var node = syntax.TryFindMostSpecificNodeExclusive(offset, current => true);
             if (node == null)
             {
                 return new CompletionContext(CompletionContextKind.None);
