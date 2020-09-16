@@ -165,4 +165,8 @@ var myVar2 = any({
 //@[4:10) Variable myVar2. Declaration start char: 0, length: 41
   something: myVar
 })
+var myVar3 = any(any({
+//@[4:10) Variable myVar3. Declaration start char: 0, length: 46
+  something: myVar
+}))
 

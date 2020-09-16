@@ -85,6 +85,9 @@
     "myVar": "hello",
     "myVar2": {
       "something": "[variables('myVar')]"
+    },
+    "myVar3": {
+      "something": "[variables('myVar')]"
     }
   },
   "resources": [],

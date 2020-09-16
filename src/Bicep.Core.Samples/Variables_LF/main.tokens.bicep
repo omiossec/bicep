@@ -652,5 +652,25 @@ var myVar2 = any({
 //@[0:1) RightBrace |}|
 //@[1:2) RightParen |)|
 //@[2:3) NewLine |\n|
+var myVar3 = any(any({
+//@[0:3) Identifier |var|
+//@[4:10) Identifier |myVar3|
+//@[11:12) Assignment |=|
+//@[13:16) Identifier |any|
+//@[16:17) LeftParen |(|
+//@[17:20) Identifier |any|
+//@[20:21) LeftParen |(|
+//@[21:22) LeftBrace |{|
+//@[22:23) NewLine |\n|
+  something: myVar
+//@[2:11) Identifier |something|
+//@[11:12) Colon |:|
+//@[13:18) Identifier |myVar|
+//@[18:19) NewLine |\n|
+}))
+//@[0:1) RightBrace |}|
+//@[1:2) RightParen |)|
+//@[2:3) RightParen |)|
+//@[3:4) NewLine |\n|
 
 //@[0:0) EndOfFile ||

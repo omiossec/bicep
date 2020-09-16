@@ -127,3 +127,6 @@ var myVar = 'hello'
 var myVar2 = any({
   something: myVar
 })
+var myVar3 = any(any({
+  something: myVar
+}))
